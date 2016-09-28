@@ -74,7 +74,6 @@ public class Netty4Client extends AbstractClient {
 
 			if (ret && future.isSuccess()) {
 				io.netty.channel.Channel newChannel = future.channel();
-				newChannel.config().setAutoRead(false);
 				try {
 					// copy ref first
 					io.netty.channel.Channel oldChannel = Netty4Client.this.channel;
