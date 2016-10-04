@@ -109,6 +109,8 @@ public class Netty4ChannelBuffer implements ChannelBuffer {
 		checkDstIndex(index, length, dstIndex, dst.capacity());
 		if (dst.hasArray()) {
 			buf.getBytes(index, dst.array(), dstIndex, length);
+		} else if (hasArray()) {
+			dst.setBytes(dstIndex, array(), index, length);
 		} else {
 			byte[] v = new byte[length];
 			buf.getBytes(index, v);
@@ -301,6 +303,8 @@ public class Netty4ChannelBuffer implements ChannelBuffer {
 		checkSrcIndex(index, length, srcIndex, src.capacity());
 		if (src.hasArray()) {
 			buf.setBytes(index, src.array(), srcIndex, length);
+		} else if (hasArray()) {
+			src.getBytes(srcIndex, array(), index, length);
 		} else {
 			byte[] v = new byte[length];
 			src.getBytes(srcIndex, v);
@@ -415,10 +419,14 @@ public class Netty4ChannelBuffer implements ChannelBuffer {
 		ensureWritable(length);
 		if (src.hasArray()) {
 			buf.writeBytes(src.array(), srcIndex, length);
+		} else if (hasArray()) {
+			setBytes(writerIndex(), src, srcIndex, length);
+			writerIndex(writerIndex() + length);
 		} else {
 			byte[] v = new byte[length];
 			src.getBytes(srcIndex, v);
 			buf.writeBytes(v);
+			writerIndex(writerIndex() + length);
 		}
 	}
 
